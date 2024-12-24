@@ -34,17 +34,8 @@ minPriceIndex = df['Low'].idxmin()
 minPrice = df.loc[minPriceIndex, 'Low']
 minPriceDate = df.loc[minPriceIndex, 'Date']
 
-# Note: The 'Volume' column represents trading activity on a specific exchange 
-# and may not accurately reflect the total trading volume of Bitcoin across 
-# all markets, especially given the decline in activity on this particular exchange.
-
-# maxVolumeIndex = df['Volume'].idxmax()
-# maxVolume = df.loc[maxVolumeIndex, 'Volume']
-# maxVolumeDate = df.loc[maxVolumeIndex, 'Date']
-
-# minVolumeIndex = df['Volume'].idxmin()
-# minVolume = df.loc[minVolumeIndex,'Volume']
-# minVolumeDate = df.loc[minVolumeIndex,'Date']
+# Note: The 'Volume' column reflects activity on one exchange, not total Bitcoin volume.
+# It has been excluded from analysis due to limited relevance.
 
 maxChangeIndex = df['Change_Percentage'].idxmax()
 maxChange = df.loc[maxChangeIndex, 'Change_Percentage']
@@ -53,8 +44,3 @@ maxChangeDate = df.loc[maxChangeIndex, 'Date']
 minChangeIndex = df['Change_Percentage'].idxmin()
 minChange = df.loc[minChangeIndex, 'Change_Percentage']
 minChangeDate = df.loc[minChangeIndex, 'Date']
-
-print(maxPrice,maxPriceDate,sep=' = ')
-print(minPrice,minPriceDate,sep=' = ')
-print(maxChange,maxChangeDate,sep=' = ')
-print(minChange,minChangeDate,sep=' = ')
