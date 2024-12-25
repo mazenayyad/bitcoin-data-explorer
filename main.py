@@ -20,10 +20,10 @@ def clean_volume(value):
     
 df = pd.read_csv('data/bitcoin_data.csv')
 
-# Renaming columns to be more descriptive
+# -----Renaming columns to be more descriptive-----
 df = df.rename(columns={'Price' : 'Close', 'Vol.' : 'Volume', 'Change %' : 'Change_Percentage'})
 
-# Convering columns to correct data types
+# -----Convering columns to correct data types-----
 df['Date'] = pd.to_datetime(df['Date'])
 df['Date'] = df['Date'].dt.date # Removes the time component from datetime (ex: 00:00)
 df['Change_Percentage'] = df['Change_Percentage'].str.replace('%','').astype(float)
@@ -33,7 +33,7 @@ df['Volume'] = df['Volume'].apply(clean_volume)
 
 df = df.sort_values(by='Date', ascending=True)
 
-# Dataset summary
+# -----Dataset summary-----
 maxPriceIndex = df['High'].idxmax()
 maxPrice = df.loc[maxPriceIndex,'High']
 maxPriceDate = df.loc[maxPriceIndex,'Date']
@@ -53,7 +53,7 @@ minChangeIndex = df['Change_Percentage'].idxmin()
 minChange = df.loc[minChangeIndex, 'Change_Percentage']
 minChangeDate = df.loc[minChangeIndex, 'Date']
 
-# Moving Averages
+# -----Moving Averages-----
 rolling_7_day = df['Close'].rolling(window=7)
 rolling_30_day = df['Close'].rolling(window=30)
 rolling_21_day = df['Close'].rolling(window=21)
@@ -61,7 +61,7 @@ df['7_Day_MA'] = rolling_7_day.mean()
 df['30_Day_MA'] = rolling_30_day.mean()
 df['21_Day_MA'] = rolling_21_day.mean()
 
-# Longest winning/losing streaks
+# -----Longest winning/losing streaks-----
 df['Change_Sign'] = df['Change_Percentage'].apply(streak_sign)
 # Identify where streaks reset by comparing the current row's Change_Sign with the previous row's value.
 # If the sign changes (e.g., from positive to negative or vice versa), mark it as True (reset).
@@ -83,10 +83,22 @@ maxLosingStreak = losingStreaks['Streak_Length'].max()
 longestWinningStreak = winningStreaks[winningStreaks['Streak_Length'] == maxWinningStreak]
 longestLosingStreak = losingStreaks[losingStreaks['Streak_Length'] == maxLosingStreak]
 
-# Extract start and end dates for winning streak
-winningStreakStart = longestWinningStreak['Date'].iloc[0]
-winningStreakEnd = longestWinningStreak['Date'].iloc[-1]
+# Winning streak calculations
+winningStreakEnd = longestWinningStreak['Date'].iloc[-1] # Last occurrence of the streak
+endIndex = longestWinningStreak.index[-1]
+startIndex = endIndex - (maxWinningStreak - 1)
+winningStreakStart = df.loc[startIndex, 'Date']
 
-# Extract start and end dates for losing streak
-losingStreakStart = longestLosingStreak['Date'].iloc[0]
-losingStreakEnd = longestLosingStreak['Date'].iloc[-1]
+# Ensure the start date is earlier than the end date
+if winningStreakStart > winningStreakEnd:
+    winningStreakStart, winningStreakEnd = winningStreakEnd, winningStreakStart
+
+# Losing streak calculations
+losingStreakEnd = longestLosingStreak['Date'].iloc[-1] # Last occurrence of the streak
+endIndex = longestLosingStreak.index[-1]
+startIndex = endIndex - (maxLosingStreak - 1)
+losingStreakStart = df.loc[startIndex, 'Date']
+
+# Ensure the start date is earlier than the end date
+if losingStreakStart > losingStreakEnd:
+    losingStreakStart, losingStreakEnd = losingStreakEnd, losingStreakStart
