@@ -1,5 +1,13 @@
 import pandas as pd
 
+def streak_sign(value):
+    if value > 0:
+        return 1 # Winning day
+    elif value < 0:
+        return -1 # Losing day
+    else:
+        return 0 # Neutral day
+
 def clean_volume(value):
     if 'K' in value:
         return float(value.replace('K','').replace(',','')) * 1000
@@ -25,7 +33,7 @@ df['Volume'] = df['Volume'].apply(clean_volume)
 
 df = df.sort_values(by='Date', ascending=True)
 
-# Dataset Summary
+# Dataset summary
 maxPriceIndex = df['High'].idxmax()
 maxPrice = df.loc[maxPriceIndex,'High']
 maxPriceDate = df.loc[maxPriceIndex,'Date']
@@ -44,3 +52,18 @@ maxChangeDate = df.loc[maxChangeIndex, 'Date']
 minChangeIndex = df['Change_Percentage'].idxmin()
 minChange = df.loc[minChangeIndex, 'Change_Percentage']
 minChangeDate = df.loc[minChangeIndex, 'Date']
+
+# Moving Averages
+rolling_7_day = df['Close'].rolling(window=7)
+rolling_30_day = df['Close'].rolling(window=30)
+rolling_21_day = df['Close'].rolling(window=21)
+df['7_Day_MA'] = rolling_7_day.mean()
+df['30_Day_MA'] = rolling_30_day.mean()
+df['21_Day_MA'] = rolling_21_day.mean()
+
+
+# Longest winning/losing streaks
+df['Change_Sign'] = df['Change_Percentage'].apply(streak_sign)
+# Identify where streaks reset by comparing the current row's Change_Sign with the previous row's value.
+# If the sign changes (e.g., from positive to negative or vice versa), mark it as True (reset).
+df['Streak_Reset'] = (df['Change_Sign'] != df['Change_Sign'].shift(1))
