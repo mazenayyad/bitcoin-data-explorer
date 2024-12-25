@@ -61,9 +61,32 @@ df['7_Day_MA'] = rolling_7_day.mean()
 df['30_Day_MA'] = rolling_30_day.mean()
 df['21_Day_MA'] = rolling_21_day.mean()
 
-
 # Longest winning/losing streaks
 df['Change_Sign'] = df['Change_Percentage'].apply(streak_sign)
 # Identify where streaks reset by comparing the current row's Change_Sign with the previous row's value.
 # If the sign changes (e.g., from positive to negative or vice versa), mark it as True (reset).
 df['Streak_Reset'] = (df['Change_Sign'] != df['Change_Sign'].shift(1))
+
+# Each time a streak resets (i.e., Streak_Reset is True), the cumulative sum increments by 1
+# This gives a unique group ID for every streak.
+df['Streak_Group'] = df['Streak_Reset'].cumsum()
+grouped = df.groupby('Streak_Group')
+df['Streak_Length'] = grouped.cumcount()+1
+
+winningStreaks = df[df['Change_Sign'] == 1]
+losingStreaks = df[df['Change_Sign'] == -1]
+
+maxWinningStreak = winningStreaks['Streak_Length'].max()
+maxLosingStreak = losingStreaks['Streak_Length'].max()
+
+# Filter rows matching the longest streak length
+longestWinningStreak = winningStreaks[winningStreaks['Streak_Length'] == maxWinningStreak]
+longestLosingStreak = losingStreaks[losingStreaks['Streak_Length'] == maxLosingStreak]
+
+# Extract start and end dates for winning streak
+winningStreakStart = longestWinningStreak['Date'].iloc[0]
+winningStreakEnd = longestWinningStreak['Date'].iloc[-1]
+
+# Extract start and end dates for losing streak
+losingStreakStart = longestLosingStreak['Date'].iloc[0]
+losingStreakEnd = longestLosingStreak['Date'].iloc[-1]
