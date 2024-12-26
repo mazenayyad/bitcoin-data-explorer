@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def streak_sign(value):
     if value > 0:
@@ -114,3 +115,15 @@ df['RS'] = df['Avg_Gain'] / df['Avg_Loss']
 # RSI formula/calculation
 df['RSI'] = 100 - (100 / (1 + df['RS']))
 
+# -----Visualizations-----
+plt.figure(figsize=(12, 6))  # Sets the figure size (width=12, height=6)
+plt.plot(df['Date'], df['Close'], label='Closing Price', linewidth=1.5)
+plt.plot(df['Date'], df['7_Day_MA'], label='7-Day MA', color='green', linewidth=0.5)
+plt.plot(df['Date'], df['21_Day_MA'], label='21-Day MA', color='orange', linewidth=0.5)
+plt.plot(df['Date'], df['30_Day_MA'], label='30-Day MA', color='red', linewidth=0.5)
+plt.title('Bitcoin Price')
+plt.xlabel('Date')
+plt.ylabel('Price (USD)')
+plt.legend()
+plt.grid(alpha=0.2)  # Adds gridlines with light transparency
+plt.show()
