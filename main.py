@@ -42,9 +42,6 @@ minPriceIndex = df['Low'].idxmin()
 minPrice = df.loc[minPriceIndex, 'Low']
 minPriceDate = df.loc[minPriceIndex, 'Date']
 
-# Note: The 'Volume' column reflects activity on one exchange, not total Bitcoin volume.
-# It has been excluded from analysis due to limited relevance.
-
 maxChangeIndex = df['Change_Percentage'].idxmax()
 maxChange = df.loc[maxChangeIndex, 'Change_Percentage']
 maxChangeDate = df.loc[maxChangeIndex, 'Date']
@@ -102,3 +99,18 @@ losingStreakStart = df.loc[startIndex, 'Date']
 # Ensure the start date is earlier than the end date
 if losingStreakStart > losingStreakEnd:
     losingStreakStart, losingStreakEnd = losingStreakEnd, losingStreakStart
+
+# -----RSI-----
+# The difference in closing prices between consecutive days
+df['Price_Change'] = df['Close'].diff()
+df['Gain'] = 0.0
+df['Loss'] = 0.0
+df.loc[df['Price_Change'] > 0, 'Gain'] = df['Price_Change'] # Positive changes are gains
+df.loc[df['Price_Change'] < 0, 'Loss'] = -df['Price_Change'] # Convert negative changes to positive for losses
+window = 14
+df['Avg_Gain'] = df['Gain'].rolling(window=window, min_periods=1).mean()
+df['Avg_Loss'] = df['Loss'].rolling(window=window, min_periods=1).mean()
+df['RS'] = df['Avg_Gain'] / df['Avg_Loss']
+# RSI formula/calculation
+df['RSI'] = 100 - (100 / (1 + df['RS']))
+
