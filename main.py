@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots # For secondary y-axis on graph
 
+st.set_page_config(layout='wide')
+
 def streak_sign(value):
     if value > 0:
         return 1 # Winning day
@@ -22,8 +24,15 @@ def clean_volume(value):
         return float(value.replace(',',''))
 
 def main():
-    df = pd.read_csv('data/bitcoin_data.csv')
+    # -----Bitcoin vs Google Trends-----
+    df_trends = pd.read_csv('data/btcgoogle.csv')
+    df_trends = df_trends.rename(columns={'Month': 'Trends_Date', 'bitcoin: (Worldwide)': 'Trend_Score'})
+    df_trends['Trends_Date'] = pd.to_datetime(df_trends['Trends_Date'], format='%Y-%m')
+    df_trends['Trends_Date'] = df_trends['Trends_Date'].dt.date # To keep as date object
+    df_trends = df_trends.sort_values(by='Trends_Date', ascending=True)
 
+
+    df = pd.read_csv('data/bitcoin_data.csv')
     # -----Renaming columns to be more descriptive-----
     df = df.rename(columns={'Price' : 'Close', 'Vol.' : 'Volume', 'Change %' : 'Change_Percentage'})
 
@@ -319,6 +328,42 @@ def main():
         fig.update_yaxes(title_text='RSI',secondary_y=True)
 
         st.plotly_chart(fig)
+    
+    #-----Bitcoin Price vs Google Trends-----
+    st.subheader('\n')
+    st.subheader('Bitcoin Price vs Google Trends')
+    fig_trends = make_subplots(specs=[[{"secondary_y": True}]])
+    fig_trends.add_trace(go.Scatter(
+        x=df['Date'],
+        y=df['Close'],
+        mode='lines',
+        name='BTC Price (USD)',
+        line={'color': '#F5C518', 'width': 2}
+    ),
+    secondary_y=False
+    )
+
+    fig_trends.add_trace(go.Scatter(
+        x=df_trends['Trends_Date'],
+        y=df_trends['Trend_Score'],
+        mode='lines+markers',
+        name='Google Trend Score',
+        line={'color': '#ADD8E6', 'width': 2}
+    ),
+    secondary_y=True
+    )
+
+    fig_trends.update_layout(
+        title='Bitcoin Price vs. Google Trends',
+        hovermode='x unified'
+    )
+
+    fig_trends.update_xaxes(title_text='Date')
+    fig_trends.update_yaxes(title_text='BTC Price (USD)', secondary_y=False)
+    fig_trends.update_yaxes(title_text='Trend Score (0-100)', secondary_y=True)
+
+    st.plotly_chart(fig_trends, use_container_width=True)
+
 
 
 if __name__ == "__main__":
