@@ -134,8 +134,81 @@ def main():
     df['BB_Lower'] = df['BB_Middle'] - 2 * df['BB_Std']
 
     # -----Visualizations-----
-    st.title('Bitcoin Price with Technical Indicators')
 
+    #-----Bitcoin Price-----
+    st.title('Bitcoin Data Explorer')
+    st.subheader('Bitcoin Price (USD)')
+    fig_simple = go.Figure()
+    fig_simple.add_trace(go.Scatter(
+        x=df['Date'],
+        y=df['Close'],
+        mode='lines',
+        name='BTC Price (USD)',
+        line={'color': '#F5C518', 'width': 2}
+    ))
+    
+    fig_simple.update_layout(
+        title='Bitcoin Price',
+        hovermode='x unified'
+    )
+
+    fig_simple.update_xaxes(title_text='Date')
+    fig_simple.update_yaxes(title_text='Price (USD)')
+
+    st.plotly_chart(fig_simple,use_container_width=True)
+
+
+    #-----Investment Calculator-----
+    st.subheader('\n')
+    st.subheader('Bitcoin Investment Calculator')
+    st.write("Enter the date range and amount you plan to invest in Bitcoin. We'll calculate the final value and ROI based on historical prices.")
+    # 1) Start Date
+    start_date = st.date_input(
+        'Start Date',
+        value=pd.to_datetime('2020-01-01') # Default date
+    )
+    # 2) End Date
+    end_date = st.date_input(
+        'End Date',
+        value=pd.to_datetime('2024-01-01') # Default date
+    )
+    # 3) Investment Amount
+    investment_amount = st.number_input(
+        'Investment Amount (USD)',
+        min_value=0.0,
+        value=0.0,
+        step=100.0
+    )
+
+    if start_date > end_date:
+        st.error("Error: Start date cannot be after end date. Please choose valid dates.")
+        st.stop()
+
+    start_price_row = df[df['Date'] == start_date]
+    end_price_row = df[df['Date'] == end_date]
+
+    if len(start_price_row)==0:
+        st.error(f'No price data for start date {start_date}. Please pick another date.')
+    else:
+        start_price = float(start_price_row['Close'].iloc[0])
+    if len(end_price_row)==0:
+        st.error(f'No price data for end date {end_date}. Please pick another date.')
+    else:
+       end_price = float(end_price_row['Close'].iloc[0])
+
+    btc_bought = investment_amount / start_price
+    final_usd_value = btc_bought * end_price
+    if investment_amount==0.0:
+        roi_percent = 0
+    else:
+        roi_percent = ((final_usd_value - investment_amount) / investment_amount) * 100
+
+    st.write(f'**Profit**: ${final_usd_value-investment_amount:,.2f}')
+    st.write(f"**ROI**: {roi_percent:.2f}%")
+
+    #-----Bitcoin with Indicators-----
+    st.subheader('\n')
+    st.subheader('Bitcoin Price with Technical Indicators')
     col1, col2 = st.columns([1, 4])
 
     with col1:
@@ -154,7 +227,7 @@ def main():
             y=df['Close'],
             mode='lines',
             name='BTC Price (USD)',
-            line={'color': 'gold', 'width': 2}
+            line={'color': '#F5C518', 'width': 2}
         ))
 
         if show_7day:
