@@ -120,17 +120,31 @@ def main():
     # RSI formula/calculation
     df['RSI'] = 100 - (100 / (1 + df['RS']))
 
+    #-----Bollinger Bands-----
+    # 20 day Simple Moving Average
+    df['BB_Middle'] = df['Close'].rolling(window=20).mean()
+
+    # 20 day rolling standard deviation
+    df['BB_Std'] = df['Close'].rolling(window=20).std()
+
+    # Upper Band = Middle + 2 * Std
+    df['BB_Upper'] = df['BB_Middle'] + 2 * df['BB_Std']
+
+    # Lower Band = Middle - 2 * Std
+    df['BB_Lower'] = df['BB_Middle'] - 2 * df['BB_Std']
+
     # -----Visualizations-----
-    st.title('Bitcoin Price')
+    st.title('Bitcoin Price with Technical Indicators')
 
     col1, col2 = st.columns([1, 4])
 
     with col1:
         # Checkboxes for each Moving Average and RSI
-        show_7day  = st.checkbox("7 MA",  value=True)
-        show_21day = st.checkbox("21 MA", value=True)
-        show_30day = st.checkbox("30 MA", value=True)
+        show_7day  = st.checkbox("7 MA",  value=False)
+        show_21day = st.checkbox("21 MA", value=False)
+        show_30day = st.checkbox("30 MA", value=False)
         show_rsi = st.checkbox("RSI", value=False)
+        show_bbands = st.checkbox("Bollinger Bands (20, 2.0)", value=True)
 
     with col2:
         fig = make_subplots(specs=[[{'secondary_y': True}]])
@@ -140,7 +154,7 @@ def main():
             y=df['Close'],
             mode='lines',
             name='BTC Price (USD)',
-            line={'color': '#F5C518', 'width': 2}
+            line={'color': 'gold', 'width': 2}
         ))
 
         if show_7day:
@@ -181,9 +195,45 @@ def main():
                 y=df['RSI'],
                 mode='lines',
                 name='RSI',
-                line={'color': 'white', 'width': 2}
+                line={'color': 'white', 'width': 2},
+                opacity=0.5
             ),
             secondary_y=True
+            )
+        
+        if show_bbands:
+            fig.add_trace(go.Scatter(
+                x=df['Date'],
+                y=df['BB_Upper'],
+                mode='lines',
+                name='Upper Bollinger Band',
+                line={'color': '#BB6BD9', 'width': 1},
+                opacity=0.6
+            ),
+            secondary_y=False
+            )
+
+            fig.add_trace(go.Scatter(
+                x=df['Date'],
+                y=df['BB_Lower'],
+                mode='lines',
+                name='Lower Bollinger Band',
+                line={'color': '#AA5BFF', 'width': 1},
+                opacity=0.6,
+                fill='tonexty',  # Fill to the previous trace
+                fillcolor='rgba(128, 128, 128, 0.25)' # Light gray shading
+            ),
+            secondary_y=False
+            )
+
+            fig.add_trace(go.Scatter(
+                x=df['Date'],
+                y=df['BB_Middle'],
+                mode='lines',
+                name='Middle Bollinger Band',
+                line={'color': '#9B51E0', 'width': 1}
+            ),
+            secondary_y=False
             )
 
         fig.update_layout(
