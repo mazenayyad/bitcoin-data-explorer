@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 def streak_sign(value):
     if value > 0:
@@ -123,9 +124,9 @@ def main():
     st.title('Bitcoin Price')
 
     # Checkboxes for each Moving Average
-    show_7day  = st.checkbox("Show 7-Day MA",  value=True)
-    show_21day = st.checkbox("Show 21-Day MA", value=True)
-    show_30day = st.checkbox("Show 30-Day MA", value=True)
+    show_7day  = st.checkbox("Show 7-Day MA",  value=False)
+    show_21day = st.checkbox("Show 21-Day MA", value=False)
+    show_30day = st.checkbox("Show 30-Day MA", value=False)
 
     fig = go.Figure()
 
@@ -134,7 +135,7 @@ def main():
         y=df['Close'],
         mode='lines',
         name='BTC Price (USD)',
-        line={'color': 'blue', 'width': 2}
+        line={'color': '#F5C518', 'width': 2}
     ))
     if show_7day:
         fig.add_trace(go.Scatter(
@@ -142,7 +143,7 @@ def main():
             y=df['7_Day_MA'],
             mode='lines',
             name='7-Day MA',
-            line={'color': 'red', 'width': 1}
+            line={'color': '#1DA1F2', 'width': 1}
         ))
     if show_21day:
         fig.add_trace(go.Scatter(
@@ -150,7 +151,7 @@ def main():
             y=df['21_Day_MA'],
             mode='lines',
             name='21-Day MA',
-            line={'color': 'orange', 'width': 1}
+            line={'color': '#2ECC71', 'width': 1}
         ))
     if show_30day:
         fig.add_trace(go.Scatter(
@@ -158,13 +159,13 @@ def main():
             y=df['30_Day_MA'],
             mode='lines',
             name='30-Day MA',
-            line={'color': 'red', 'width': 1}
+            line={'color': '#FF5E79', 'width': 1}
         ))
     fig.update_layout(
         title="Bitcoin Price",
         xaxis_title="Date",
         yaxis_title="Price (USD)",
-        hovermode="x unified"  
+        hovermode="x unified"
     )
 
     st.plotly_chart(fig, use_container_width=True)
