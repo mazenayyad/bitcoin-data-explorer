@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+from plotly.subplots import make_subplots # For secondary y-axis on graph
 
 def streak_sign(value):
     if value > 0:
@@ -123,52 +123,79 @@ def main():
     # -----Visualizations-----
     st.title('Bitcoin Price')
 
-    # Checkboxes for each Moving Average
-    show_7day  = st.checkbox("Show 7-Day MA",  value=False)
-    show_21day = st.checkbox("Show 21-Day MA", value=False)
-    show_30day = st.checkbox("Show 30-Day MA", value=False)
+    col1, col2 = st.columns([1, 4])
 
-    fig = go.Figure()
+    with col1:
+        # Checkboxes for each Moving Average and RSI
+        show_7day  = st.checkbox("7 MA",  value=True)
+        show_21day = st.checkbox("21 MA", value=True)
+        show_30day = st.checkbox("30 MA", value=True)
+        show_rsi = st.checkbox("RSI", value=False)
 
-    fig.add_trace(go.Scatter(
-        x=df['Date'],
-        y=df['Close'],
-        mode='lines',
-        name='BTC Price (USD)',
-        line={'color': '#F5C518', 'width': 2}
-    ))
-    if show_7day:
+    with col2:
+        fig = make_subplots(specs=[[{'secondary_y': True}]])
+
         fig.add_trace(go.Scatter(
             x=df['Date'],
-            y=df['7_Day_MA'],
+            y=df['Close'],
             mode='lines',
-            name='7-Day MA',
-            line={'color': '#1DA1F2', 'width': 1}
+            name='BTC Price (USD)',
+            line={'color': '#F5C518', 'width': 2}
         ))
-    if show_21day:
-        fig.add_trace(go.Scatter(
-            x=df['Date'],
-            y=df['21_Day_MA'],
-            mode='lines',
-            name='21-Day MA',
-            line={'color': '#2ECC71', 'width': 1}
-        ))
-    if show_30day:
-        fig.add_trace(go.Scatter(
-            x=df['Date'],
-            y=df['30_Day_MA'],
-            mode='lines',
-            name='30-Day MA',
-            line={'color': '#FF5E79', 'width': 1}
-        ))
-    fig.update_layout(
-        title="Bitcoin Price",
-        xaxis_title="Date",
-        yaxis_title="Price (USD)",
-        hovermode="x unified"
-    )
 
-    st.plotly_chart(fig, use_container_width=True)
+        if show_7day:
+            fig.add_trace(go.Scatter(
+                x=df['Date'],
+                y=df['7_Day_MA'],
+                mode='lines',
+                name='7-Day MA',
+                line={'color': '#1DA1F2', 'width': 1}
+            ),
+            secondary_y=False
+            )
+
+        if show_21day:
+            fig.add_trace(go.Scatter(
+                x=df['Date'],
+                y=df['21_Day_MA'],
+                mode='lines',
+                name='21-Day MA',
+                line={'color': '#2ECC71', 'width': 1}
+            ),
+            secondary_y=False
+            )
+
+        if show_30day:
+            fig.add_trace(go.Scatter(
+                x=df['Date'],
+                y=df['30_Day_MA'],
+                mode='lines',
+                name='30-Day MA',
+                line={'color': '#FF5E79', 'width': 1}
+            ),
+            secondary_y=False)
+
+        if show_rsi:
+            fig.add_trace(go.Scatter(
+                x=df['Date'],
+                y=df['RSI'],
+                mode='lines',
+                name='RSI',
+                line={'color': 'white', 'width': 2}
+            ),
+            secondary_y=True
+            )
+
+        fig.update_layout(
+            title="Bitcoin Price",
+            hovermode="x unified"
+        )
+
+        fig.update_xaxes(title_text='Date')
+        fig.update_yaxes(title_text='Price (USD)',secondary_y=False)
+        fig.update_yaxes(title_text='RSI',secondary_y=True)
+
+        st.plotly_chart(fig)
 
 
 if __name__ == "__main__":
