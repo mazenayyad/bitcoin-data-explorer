@@ -147,6 +147,7 @@ def main():
     #-----Bitcoin Price-----
     st.title('Bitcoin Data Explorer')
     st.subheader('Bitcoin Price (USD)')
+    st.write("A historical daily closing price chart for Bitcoin in USD. Hover to see exact prices on any date. This overview highlights Bitcoin's long-term price evolution.")
     fig_simple = go.Figure()
     fig_simple.add_trace(go.Scatter(
         x=df['Date'],
@@ -170,7 +171,7 @@ def main():
     #-----Investment Calculator-----
     st.subheader('\n')
     st.subheader('Bitcoin Investment Calculator')
-    st.write("Enter the date range and amount you plan to invest in Bitcoin. We'll calculate the final value and ROI based on historical prices.")
+    st.write("Choose a start date, end date, and an investment amount. We'll calculate how much your investment would be worth and your ROI. A simple 'what-if' tool for exploring potential gains or losses.")
     # 1) Start Date
     start_date = st.date_input(
         'Start Date',
@@ -218,6 +219,8 @@ def main():
     #-----Bitcoin with Indicators-----
     st.subheader('\n')
     st.subheader('Bitcoin Price with Technical Indicators')
+    st.write("Toggle popular indicators often used by traders. Each helps analyze price trends and potential market conditions.")
+    st.write("(**Tip: Scroll below the chart to find details about each indicator!**)")
     col1, col2 = st.columns([1, 4])
 
     with col1:
@@ -328,10 +331,17 @@ def main():
         fig.update_yaxes(title_text='RSI',secondary_y=True)
 
         st.plotly_chart(fig)
+        st.write("**Moving Averages (7 day, 21 day, 30 day):**")
+        st.write("- These MAs smooth out short-term price fluctuations, helping identify overall trends. A short MA (like 7-day) reacts quickly to price changes, while longer MAs (21- or 30-day) provide more stable trend views.")
+        st.write("**RSI (Relative Strength Index):**")
+        st.write("- RSI measures the speed and magnitude of recent price changes, oscillating between 0 and 100. Traditionally, RSI above 70 indicates overbought conditions; below 30 suggests oversold.")
+        st.write("**Bollinger Bands:**")
+        st.write("- Bollinger Bands show a middle line (the moving average) plus upper/lower bands that are typically ±2 standard deviations from the MA. They can help gauge volatility — when bands are wide, volatility is higher.")
     
     #-----Bitcoin Price vs Google Trends-----
     st.subheader('\n')
     st.subheader('Bitcoin Price vs Google Trends')
+    st.write("Compares Bitcoin's daily price to monthly Google search interest (Trend Score). See if public attention correlates with major price changes.")
     fig_trends = make_subplots(specs=[[{"secondary_y": True}]])
     fig_trends.add_trace(go.Scatter(
         x=df['Date'],
