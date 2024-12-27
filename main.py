@@ -374,6 +374,18 @@ def main():
 
     st.plotly_chart(fig_trends, use_container_width=True)
 
+    #-----Fun Facts-----
+    st.subheader('\n')
+    st.subheader('Fun Facts about Bitcoin (based on the data)!')
+    st.write(f"**All-time Minimum Price**: ${minPrice:,.2f} on {minPriceDate}")
+    st.write(f"**All-time Maximum Price**: ${maxPrice:,.2f} on {maxPriceDate}")
+    st.write(f"**Longest Winning Streak**: {maxWinningStreak} days")
+    st.write(f"- Started on: {winningStreakStart}")
+    st.write(f"- Ended on: {winningStreakEnd}")
+
+    st.write(f"**Longest Losing Streak**: {maxLosingStreak} days")
+    st.write(f"- Started on: {losingStreakStart}")
+    st.write(f"- Ended on: {losingStreakEnd}")
 
 
 if __name__ == "__main__":
