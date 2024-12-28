@@ -1,3 +1,4 @@
+# [Demo] (https://bitcoin-data-explorer-mazen.streamlit.app/)
 # Bitcoin Data Explorer
 An interactive dashboard for analyzing 10 years of Bitcoin price data (through December 23, 2024). It features flexible visualizations, investment scenario modeling, and essential technical indicators, plus a quick public-interest comparison with Google Trends data.
 
