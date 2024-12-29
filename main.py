@@ -31,6 +31,18 @@ def main():
     df_trends['Trends_Date'] = df_trends['Trends_Date'].dt.date # To keep as date object
     df_trends = df_trends.sort_values(by='Trends_Date', ascending=True)
 
+    # ----- Bitcoin vs Stock Market-----
+    df_sp = pd.read_csv('data/snp500.csv')
+    df_sp = df_sp.rename(columns={'Price' : 'Close', 'Vol.' : 'Volume', 'Change %' : 'Change_Percentage'})
+    df_sp['Date'] = pd.to_datetime(df_sp['Date'])
+    df_sp['Date'] = df_sp['Date'].dt.date
+    df_sp['Change_Percentage'] = df_sp['Change_Percentage'].str.replace('%','').astype(float)
+    for col in ['Close', 'Open', 'High', 'Low']:
+        df_sp[col] = df_sp[col].str.replace(',','').astype(float)
+    df_sp = df_sp.sort_values(by='Date', ascending=True)
+
+
+
 
     df = pd.read_csv('data/bitcoin_data.csv')
     # -----Renaming columns to be more descriptive-----
@@ -338,6 +350,43 @@ def main():
         st.write("**Bollinger Bands:**")
         st.write("- Bollinger Bands show a middle line (the moving average) plus upper/lower bands that are typically ±2 standard deviations from the MA. They can help gauge volatility — when bands are wide, volatility is higher.")
     
+    #-----Bitcoin vs Stock Market-----
+    st.subheader('\n')
+    st.subheader('Bitcoin Price vs Stock Market (S&P 500 Index)')
+    st.write("Compares Bitcoin's daily price to S&P 500 index prices. See if there's any correlation between Bitcoin and traditional stock market trends.")
+    fig_stock = make_subplots(specs=[[{"secondary_y": True}]])
+    
+    fig_stock.add_trace(go.Scatter(
+        x=df['Date'],
+        y=df['Close'],
+        mode='lines',
+        name='BTC Price (USD)',
+        line={'color': '#F5C518', 'width': 2}
+    ),
+    secondary_y=False
+    )
+
+    fig_stock.add_trace(go.Scatter(
+        x=df_sp['Date'],
+        y=df_sp['Close'],
+        mode='lines',
+        name='S&P 500 Close Price',
+        line={'color': '#0073e6', 'width': 2}
+    ),
+    secondary_y=True
+    )
+
+    fig_stock.update_layout(
+        title='Bitcoin Price vs. Stock Market (S&P 500)',
+        hovermode='x unified'
+    )
+
+    fig_stock.update_xaxes(title_text='Date')
+    fig_stock.update_yaxes(title_text='BTC Price (USD)', secondary_y=False)
+    fig_stock.update_yaxes(title_text='S&P 500 Price (USD)', secondary_y=True)
+
+    st.plotly_chart(fig_stock, use_container_width=True)
+
     #-----Bitcoin Price vs Google Trends-----
     st.subheader('\n')
     st.subheader('Bitcoin Price vs Google Trends')
