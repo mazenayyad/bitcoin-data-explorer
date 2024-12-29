@@ -181,7 +181,7 @@ def main():
 
 
     #-----Investment Calculator-----
-    st.subheader('\n')
+    st.markdown("---")
     st.subheader('Bitcoin Investment Calculator')
     st.write("Choose a start date, end date, and an investment amount. We'll calculate how much your investment would be worth and your ROI. A simple 'what-if' tool for exploring potential gains or losses.")
     # 1) Start Date
@@ -229,7 +229,7 @@ def main():
     st.write(f"**ROI**: {roi_percent:.2f}%")
 
     #-----Bitcoin with Indicators-----
-    st.subheader('\n')
+    st.markdown("---")
     st.subheader('Bitcoin Price with Technical Indicators')
     st.write("Toggle popular indicators often used by traders. Each helps analyze price trends and potential market conditions.")
     st.write("(**Tip: Scroll below the chart to find details about each indicator!**)")
@@ -351,7 +351,7 @@ def main():
         st.write("- Bollinger Bands show a middle line (the moving average) plus upper/lower bands that are typically ±2 standard deviations from the MA. They can help gauge volatility — when bands are wide, volatility is higher.")
     
     #-----Bitcoin vs Stock Market-----
-    st.subheader('\n')
+    st.markdown("---")
     st.subheader('Bitcoin Price vs Stock Market (S&P 500 Index)')
     st.write("Compares Bitcoin's daily price to S&P 500 index prices. See if there's any correlation between Bitcoin and traditional stock market trends.")
     fig_stock = make_subplots(specs=[[{"secondary_y": True}]])
@@ -388,7 +388,7 @@ def main():
     st.plotly_chart(fig_stock, use_container_width=True)
 
     #-----Bitcoin Price vs Google Trends-----
-    st.subheader('\n')
+    st.markdown("---")
     st.subheader('Bitcoin Price vs Google Trends')
     st.write("Compares Bitcoin's daily price to monthly Google search interest (Trend Score). See if public attention correlates with major price changes.")
     fig_trends = make_subplots(specs=[[{"secondary_y": True}]])
@@ -423,18 +423,21 @@ def main():
 
     st.plotly_chart(fig_trends, use_container_width=True)
 
-    #-----Fun Facts-----
-    st.subheader('\n')
-    st.subheader('Fun Facts about Bitcoin (based on the data)!')
-    st.write(f"**All-time Minimum Price**: ${minPrice:,.2f} on {minPriceDate}")
-    st.write(f"**All-time Maximum Price**: ${maxPrice:,.2f} on {maxPriceDate}")
-    st.write(f"**Longest Winning Streak**: {maxWinningStreak} days")
-    st.write(f"- Started on: {winningStreakStart}")
-    st.write(f"- Ended on: {winningStreakEnd}")
+    # Format the dates into "Day Month Year" format
+    minPriceDateFormatted = pd.to_datetime(minPriceDate).strftime("%d %B %Y")
+    maxPriceDateFormatted = pd.to_datetime(maxPriceDate).strftime("%d %B %Y")
+    winningStreakStartFormatted = pd.to_datetime(winningStreakStart).strftime("%d %B %Y")
+    winningStreakEndFormatted = pd.to_datetime(winningStreakEnd).strftime("%d %B %Y")
+    losingStreakStartFormatted = pd.to_datetime(losingStreakStart).strftime("%d %B %Y")
+    losingStreakEndFormatted = pd.to_datetime(losingStreakEnd).strftime("%d %B %Y")
 
-    st.write(f"**Longest Losing Streak**: {maxLosingStreak} days")
-    st.write(f"- Started on: {losingStreakStart}")
-    st.write(f"- Ended on: {losingStreakEnd}")
+    #-----Fun Facts-----
+    st.markdown("---")
+    st.subheader('Fun Facts about Bitcoin (based on the data)!')
+    st.warning(f"🏆 **All-time Minimum Price**: **${minPrice:,.2f}** on **{minPriceDateFormatted}**")
+    st.info(f"🚀 **All-time Maximum Price**: **${maxPrice:,.2f}** on **{maxPriceDateFormatted}**")
+    st.success(f"🟢 **Longest Winning Streak**: **{maxWinningStreak} days**\n- Started on: **{winningStreakStartFormatted}**\n- Ended on: **{winningStreakEndFormatted}**")
+    st.error(f"🔴 **Longest Losing Streak**: **{maxLosingStreak} days**\n- Started on: **{losingStreakStartFormatted}**\n- Ended on: **{losingStreakEndFormatted}**")
 
 
 if __name__ == "__main__":
