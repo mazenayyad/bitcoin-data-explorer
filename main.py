@@ -143,16 +143,16 @@ def main():
 
     #-----Bollinger Bands-----
     # 20 day Simple Moving Average
-    df['BB_Middle'] = df['Close'].rolling(window=20).mean()
+    df['BB_Middle'] = df['Close'].rolling(window=20).mean().round(1)
 
     # 20 day rolling standard deviation
     df['BB_Std'] = df['Close'].rolling(window=20).std()
 
     # Upper Band = Middle + 2 * Std
-    df['BB_Upper'] = df['BB_Middle'] + 2 * df['BB_Std']
+    df['BB_Upper'] = df['BB_Middle'] + 2 * df['BB_Std'].round(1)
 
     # Lower Band = Middle - 2 * Std
-    df['BB_Lower'] = df['BB_Middle'] - 2 * df['BB_Std']
+    df['BB_Lower'] = df['BB_Middle'] - 2 * df['BB_Std'].round(1)
 
     # -----Visualizations-----
 
@@ -175,7 +175,7 @@ def main():
     )
 
     fig_simple.update_xaxes(title_text='Date')
-    fig_simple.update_yaxes(title_text='Price (USD)')
+    fig_simple.update_yaxes(title_text='Price (USD)', tickformat=',')
 
     st.plotly_chart(fig_simple,use_container_width=True)
 
@@ -339,7 +339,7 @@ def main():
         )
 
         fig.update_xaxes(title_text='Date')
-        fig.update_yaxes(title_text='Price (USD)',secondary_y=False)
+        fig.update_yaxes(title_text='Price (USD)',secondary_y=False, tickformat=',')
         fig.update_yaxes(title_text='RSI',secondary_y=True)
 
         st.plotly_chart(fig)
@@ -382,8 +382,8 @@ def main():
     )
 
     fig_stock.update_xaxes(title_text='Date')
-    fig_stock.update_yaxes(title_text='BTC Price (USD)', secondary_y=False)
-    fig_stock.update_yaxes(title_text='S&P 500 Price (USD)', secondary_y=True)
+    fig_stock.update_yaxes(title_text='BTC Price (USD)', secondary_y=False, tickformat=',')
+    fig_stock.update_yaxes(title_text='S&P 500 Price (USD)', secondary_y=True, tickformat=',')
 
     st.plotly_chart(fig_stock, use_container_width=True)
 
@@ -418,7 +418,7 @@ def main():
     )
 
     fig_trends.update_xaxes(title_text='Date')
-    fig_trends.update_yaxes(title_text='BTC Price (USD)', secondary_y=False)
+    fig_trends.update_yaxes(title_text='BTC Price (USD)', secondary_y=False, tickformat=',')
     fig_trends.update_yaxes(title_text='Trend Score (0-100)', secondary_y=True)
 
     st.plotly_chart(fig_trends, use_container_width=True)
