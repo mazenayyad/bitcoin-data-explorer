@@ -24,26 +24,6 @@ def clean_volume(value):
         return float(value.replace(',',''))
 
 def main():
-    # -----Bitcoin vs Google Trends-----
-    df_trends = pd.read_csv('data/btcgoogle.csv')
-    df_trends = df_trends.rename(columns={'Month': 'Trends_Date', 'bitcoin: (Worldwide)': 'Trend_Score'})
-    df_trends['Trends_Date'] = pd.to_datetime(df_trends['Trends_Date'], format='%Y-%m')
-    df_trends['Trends_Date'] = df_trends['Trends_Date'].dt.date # To keep as date object
-    df_trends = df_trends.sort_values(by='Trends_Date', ascending=True)
-
-    # ----- Bitcoin vs Stock Market-----
-    df_sp = pd.read_csv('data/snp500.csv')
-    df_sp = df_sp.rename(columns={'Price' : 'Close', 'Vol.' : 'Volume', 'Change %' : 'Change_Percentage'})
-    df_sp['Date'] = pd.to_datetime(df_sp['Date'])
-    df_sp['Date'] = df_sp['Date'].dt.date
-    df_sp['Change_Percentage'] = df_sp['Change_Percentage'].str.replace('%','').astype(float)
-    for col in ['Close', 'Open', 'High', 'Low']:
-        df_sp[col] = df_sp[col].str.replace(',','').astype(float)
-    df_sp = df_sp.sort_values(by='Date', ascending=True)
-
-
-
-
     df = pd.read_csv('data/bitcoin_data.csv')
     # -----Renaming columns to be more descriptive-----
     df = df.rename(columns={'Price' : 'Close', 'Vol.' : 'Volume', 'Change %' : 'Change_Percentage'})
@@ -153,6 +133,23 @@ def main():
 
     # Lower Band = Middle - 2 * Std
     df['BB_Lower'] = df['BB_Middle'] - 2 * df['BB_Std'].round(1)
+
+    # -----Bitcoin vs Google Trends-----
+    df_trends = pd.read_csv('data/btcgoogle.csv')
+    df_trends = df_trends.rename(columns={'Month': 'Trends_Date', 'bitcoin: (Worldwide)': 'Trend_Score'})
+    df_trends['Trends_Date'] = pd.to_datetime(df_trends['Trends_Date'], format='%Y-%m')
+    df_trends['Trends_Date'] = df_trends['Trends_Date'].dt.date # To keep as date object
+    df_trends = df_trends.sort_values(by='Trends_Date', ascending=True)
+
+    # ----- Bitcoin vs Stock Market-----
+    df_sp = pd.read_csv('data/snp500.csv')
+    df_sp = df_sp.rename(columns={'Price' : 'Close', 'Vol.' : 'Volume', 'Change %' : 'Change_Percentage'})
+    df_sp['Date'] = pd.to_datetime(df_sp['Date'])
+    df_sp['Date'] = df_sp['Date'].dt.date
+    df_sp['Change_Percentage'] = df_sp['Change_Percentage'].str.replace('%','').astype(float)
+    for col in ['Close', 'Open', 'High', 'Low']:
+        df_sp[col] = df_sp[col].str.replace(',','').astype(float)
+    df_sp = df_sp.sort_values(by='Date', ascending=True)
 
     # -----Visualizations-----
 
