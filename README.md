@@ -48,7 +48,7 @@ A minimal set of dependencies is pinned in **`requirements.txt`**.
 
 ---
 
-## 4. Quick Tour (Screenshots/Overview)
+## 4. Quick Tour (GIF/Overview)
 
 ![Demo GIF](./static/img/demo.gif)
 
