@@ -7,9 +7,82 @@ import datetime
 
 st.set_page_config(layout='wide')
 
-import yfinance as yf
-import datetime
-import pandas as pd
+def get_updated_sp(csv_path='data/snp500.csv'):
+    df_old = pd.read_csv(csv_path)
+    df_old['Date'] = pd.to_datetime(df_old['Date'])
+
+    if 'Change_Percentage' not in df_old.columns and 'Change %' in df_old.columns:
+        df_old.rename(columns={'Change %': 'Change_Percentage'}, inplace=True)
+    if 'Change_Percentage' in df_old.columns:
+        df_old['Change_Percentage'] = (df_old['Change_Percentage']
+        .replace({'%':''}, regex=True) # in case it has "%" sign
+        .replace({',':''}, regex=True) # in case it has commas
+        .astype(float)
+        )
+    for col in ['Price', 'Open', 'High','Low']:
+        if col in df_old.columns:
+            df_old[col] = (df_old[col].replace({',':''}, regex=True).astype(float))
+
+    last_date = df_old['Date'].max()
+    start_date = last_date + pd.Timedelta(days=1)
+
+    today = datetime.datetime.today().date()
+    if start_date.date() > today:
+        return df_old
+
+    # fetch data from yfinance for S&P500 index
+    data_new = yf.download(
+        '^GSPC', # S&P500 index ticker
+        start=start_date,
+        end=today,
+        group_by='column', # flatten multi-index
+        auto_adjust=False,
+        progress=False
+    )
+    
+    if data_new.empty:
+        return df_old
+
+    # flatten if still multi level
+    if isinstance(data_new.columns, pd.MultiIndex):
+        data_new.columns = data_new.columns.droplevel(1)
+
+    # reset index to get 'Date' as column
+    data_new.reset_index(inplace=True)
+
+    data_new.rename(
+        columns={
+            'Date':'Date',
+            'Open':'Open',
+            'High': 'High',
+            'Low': 'Low',
+            'Close': 'Price'
+        },
+        inplace=True
+    )
+
+    # keep only columns used
+    data_new = data_new[['Date', 'Price', 'Open', 'High', 'Low']]
+
+    # convert them to float
+    for col in ['Price', 'Open', 'High', 'Low']:
+        data_new[col] = data_new[col].astype(float)
+    
+    # compute daily % change
+    data_new['Change_Percentage'] = data_new['Price'].pct_change() * 100
+
+    # make sure Date is datetime
+    data_new['Date'] = pd.to_datetime(data_new['Date'])
+
+    # concat old + new
+    df_combined = pd.concat([df_old, data_new], ignore_index=True)
+    df_combined.sort_values(by='Date', inplace=True)
+    df_combined.drop_duplicates(subset='Date', keep='first', inplace=True)
+
+    # save and return
+    df_combined.to_csv(csv_path, index=False)
+    return df_combined
+
 
 def get_updated_df(csv_path='data/bitcoin_data.csv'):
     # load old csv
@@ -213,14 +286,15 @@ def main():
     df_trends = df_trends.sort_values(by='Trends_Date', ascending=True)
 
     # ----- Bitcoin vs Stock Market-----
-    df_sp = pd.read_csv('data/snp500.csv')
-    df_sp = df_sp.rename(columns={'Price' : 'Close', 'Vol.' : 'Volume', 'Change %' : 'Change_Percentage'})
-    df_sp['Date'] = pd.to_datetime(df_sp['Date'])
-    df_sp['Date'] = df_sp['Date'].dt.date
-    df_sp['Change_Percentage'] = df_sp['Change_Percentage'].str.replace('%','').astype(float)
-    for col in ['Close', 'Open', 'High', 'Low']:
-        df_sp[col] = df_sp[col].str.replace(',','').astype(float)
-    df_sp = df_sp.sort_values(by='Date', ascending=True)
+    df_sp = get_updated_sp('data/snp500.csv')
+    df_sp = df_sp.rename(columns={'Price': 'Close'})
+    # df_sp = df_sp.rename(columns={'Price' : 'Close', 'Vol.' : 'Volume', 'Change %' : 'Change_Percentage'})
+    # df_sp['Date'] = pd.to_datetime(df_sp['Date'])
+    # df_sp['Date'] = df_sp['Date'].dt.date
+    #df_sp['Change_Percentage'] = df_sp['Change_Percentage'].str.replace('%','').astype(float)
+    # for col in ['Close', 'Open', 'High', 'Low']:
+    #     df_sp[col] = df_sp[col].str.replace(',','').astype(float)
+    # df_sp = df_sp.sort_values(by='Date', ascending=True)
 
     # -----Visualizations-----
 
