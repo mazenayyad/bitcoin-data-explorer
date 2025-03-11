@@ -55,6 +55,9 @@ A minimal set of dependencies is pinned in **`requirements.txt`**.
 
 [**Try the live demo here**](https://bitcoin-data-explorer-mazen.streamlit.app/)
 
+
+# Overview
+
 1. **Landing Page – BTC Price Timeline**  
    - Instantly see the historical closing price of Bitcoin, with hover-enabled data points.
 
