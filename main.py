@@ -2,8 +2,94 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots # For secondary y-axis on graph
+import yfinance as yf
+import datetime
 
 st.set_page_config(layout='wide')
+
+import yfinance as yf
+import datetime
+import pandas as pd
+
+def get_updated_df(csv_path='data/bitcoin_data.csv'):
+    # load old csv
+    df_old = pd.read_csv(csv_path)
+
+    # make sure Date column is datetime
+    df_old['Date'] = pd.to_datetime(df_old['Date'])
+
+    # convert old's Price/Open/High/Low to numeric in case there's commas or string
+    df_old['Price'] = df_old['Price'].replace({',':''}, regex=True).astype(float)
+    df_old['Open']  = df_old['Open'].replace({',':''},  regex=True).astype(float)
+    df_old['High']  = df_old['High'].replace({',':''},  regex=True).astype(float)
+    df_old['Low']   = df_old['Low'].replace({',':''},   regex=True).astype(float)
+
+    # remove % from change %, in case
+    if 'Change %' in df_old.columns:
+        df_old['Change %'] = df_old['Change %'].replace({'%':''}, regex=True).astype(float)
+        df_old.rename(columns={'Change %': 'Change_Percentage'})
+
+    # figure out last date prior to updating
+    last_date = df_old['Date'].max()
+    start_date = last_date + pd.Timedelta(days=1)
+
+    # download new data from yfinance
+    today = datetime.datetime.today().date()
+    if start_date.date() > today:
+        return df_old  # Nothing new
+
+    data_new = yf.download(
+        'BTC-USD',
+        start=start_date,
+        end=today,
+        group_by='column',    # flatten columns ex: Open_BTC-USD
+        auto_adjust=False,
+        progress=False
+    )
+
+    if data_new.empty:
+        return df_old
+
+    # This next step ensures we drop the second level if it’s still MultiIndex
+    if isinstance(data_new.columns, pd.MultiIndex):
+        data_new.columns = data_new.columns.droplevel(1)
+
+    # --- 3) data_new cleanup & rename ---
+    data_new.reset_index(inplace=True)  # Move DatetimeIndex -> 'Date'
+    data_new.rename(
+        columns={
+            'Date': 'Date',
+            'Open': 'Open',
+            'High': 'High',
+            'Low': 'Low',
+            'Close': 'Price',  # We match the old CSV's "Price" column name
+        },
+        inplace=True
+    )
+
+    # Keep only the columns we actually use
+    data_new = data_new[['Date', 'Price', 'Open', 'High', 'Low']]
+
+    # Convert to numeric (yfinance is usually already numeric, but let’s be sure)
+    for col in ['Price','Open','High','Low']:
+        data_new[col] = data_new[col].astype(float)
+
+    # Create a daily % change so it matches the old CSV’s concept of "Change %"
+    # or name it "Change_Percentage"—whichever you prefer. For example:
+    data_new['Change %'] = data_new['Price'].pct_change() * 100
+
+    # Make sure Date is datetime
+    data_new['Date'] = pd.to_datetime(data_new['Date'])
+
+    # --- 4) Combine old + new ---
+    df_combined = pd.concat([df_old, data_new], ignore_index=True)
+    df_combined.sort_values(by='Date', inplace=True)
+    df_combined.drop_duplicates(subset='Date', keep='first', inplace=True)
+
+    # --- 5) Save updated file & return ---
+    df_combined.to_csv(csv_path, index=False)
+    return df_combined
+
 
 def streak_sign(value):
     if value > 0:
@@ -13,29 +99,14 @@ def streak_sign(value):
     else:
         return 0 # Neutral day
 
-def clean_volume(value):
-    if 'K' in value:
-        return float(value.replace('K','').replace(',','')) * 1000
-    if 'M' in value:
-        return float(value.replace('M','').replace(',','')) * 1000000
-    if 'B' in value:
-        return float(value.replace('B','').replace(',','')) * 1000000000
-    else:
-        return float(value.replace(',',''))
-
 def main():
-    df = pd.read_csv('data/bitcoin_data.csv')
-    # -----Renaming columns to be more descriptive-----
-    df = df.rename(columns={'Price' : 'Close', 'Vol.' : 'Volume', 'Change %' : 'Change_Percentage'})
+    df = get_updated_df('data/bitcoin_data.csv')
+
+    df.rename(columns={'Price': 'Close'}, inplace=True)
 
     # -----Convering columns to correct data types-----
     df['Date'] = pd.to_datetime(df['Date'])
     df['Date'] = df['Date'].dt.date # Removes the time component from datetime (ex: 00:00)
-    df['Change_Percentage'] = df['Change_Percentage'].str.replace('%','').astype(float)
-    for col in ['Close', 'Open', 'High', 'Low']:
-        df[col] = df[col].str.replace(',','').astype(float)
-    df['Volume'] = df['Volume'].apply(clean_volume)
-
     df = df.sort_values(by='Date', ascending=True)
     df['Year'] = pd.to_datetime(df['Date']).dt.year
     df['Month_Name'] = pd.to_datetime(df['Date']).dt.strftime('%B')
