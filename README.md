@@ -52,7 +52,7 @@ A minimal set of dependencies is pinned in **`requirements.txt`**.
 
 **Screenshot of the Homepage:**
 
-![Homepage Screenshot](./static/img/homepage.png)
+![Homepage Screenshot](./static/img/home.png)
 
 **App Overview in Action (GIF):**
 
