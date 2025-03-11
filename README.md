@@ -53,7 +53,7 @@ A minimal set of dependencies is pinned in **`requirements.txt`**.
 
 ![Demo GIF](./static/img/demos.gif)
 
-[**Try the live demo here**](https://bitcoin-data-explorer-mazen.streamlit.app/)
+[**Demo link**](https://bitcoin-data-explorer-mazen.streamlit.app/)
 
 
 ### Overview
