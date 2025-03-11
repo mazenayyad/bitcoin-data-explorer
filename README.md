@@ -50,10 +50,17 @@ A minimal set of dependencies is pinned in **`requirements.txt`**.
 
 ## 4. Quick Tour (Demo/GIF/Overview)
 
+**Screenshot of the Homepage:**
 
-![Demo GIF](./static/img/demos.gif)
+![Homepage Screenshot](./static/img/homepage.png)
 
-[**Demo link**](https://bitcoin-data-explorer-mazen.streamlit.app/)
+**App Overview in Action (GIF):**
+
+![Overview GIF](./static/img/overview.gif)
+
+
+
+[**Link**](https://bitcoin-data-explorer-mazen.streamlit.app/)
 
 
 ### Overview
