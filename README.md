@@ -60,7 +60,7 @@ A minimal set of dependencies is pinned in **`requirements.txt`**.
 
 
 
-[**Link**](https://bitcoin-data-explorer-mazen.streamlit.app/)
+[**Link**](https://bitcoin-data-explorer-mazen.streamlit.app/)  
 
 
 ### Overview  
