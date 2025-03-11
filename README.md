@@ -7,7 +7,7 @@
 
 Bitcoin’s price can appear chaotic, but effective analysis reveals meaningful patterns. This project tackles the challenge of **daily BTC data updates**, *correlates* them with **S&P 500** performance, and *visualizes* **Google Trends** interest—creating a comprehensive snapshot of Bitcoin’s market behavior over time.
 
-A streamlined **Streamlit** dashboard showcases **Bollinger Bands**, **RSI**, and **Moving Averages**, as well as fun stats like *longest winning and losing streaks*. With built-in ROI calculations, this project provides a *“what-if”* lens on past Bitcoin performance.
+A dashboard showcases **Bollinger Bands**, **RSI**, and **Moving Averages**, as well as fun stats like *longest winning and losing streaks*. With built-in ROI calculations, this project provides a *“what-if”* lens on past Bitcoin performance.
 
 ---
 
@@ -27,7 +27,7 @@ A streamlined **Streamlit** dashboard showcases **Bollinger Bands**, **RSI**, an
   - Enter any start/end date and investment amount to see the hypothetical profit/loss and overall ROI.
 
 - **Interactive Visuals**  
-  - Plots generated using **Plotly**, enabling hover details and dynamic toggling of indicators.  
+  - Plots generated, enabling hover details and dynamic toggling of indicators.  
   - Side-by-side comparisons of Bitcoin vs. S&P 500 and Bitcoin vs. Google Trends.
 
 - **Historical Fun Facts**  
@@ -42,13 +42,15 @@ A streamlined **Streamlit** dashboard showcases **Bollinger Bands**, **RSI**, an
 - **Plotly** – High-quality, interactive chart rendering  
 - **yfinance** – Automated data ingestion for both BTC and S&P 500  
 - **pytrends** – Programmatic interface for Google Trends data  
-- **Python** (>=3.8) – Core language for data processing  
+- **Python** – Core language for data processing  
 
 A minimal set of dependencies is pinned in **`requirements.txt`**.
 
 ---
 
 ## 4. Quick Tour (Screenshots/Overview)
+
+![Demo GIF](./static/img/demo.gif)
 
 1. **Landing Page – BTC Price Timeline**  
    - Instantly see the historical closing price of Bitcoin, with hover-enabled data points.
