@@ -17,7 +17,7 @@ A dashboard showcases **Bollinger Bands**, **RSI**, and **Moving Averages**, as 
   - The dashboard continuously fetches up-to-date Bitcoin and S&P 500 data via `yfinance`.
   - Google Trends scores for "Bitcoin" search interest are updated daily, ensuring all visuals reflect the latest market sentiments.
 
-- **Technical Indicator Overload**  
+- **Comprehensive Technical Indicators**  
   - **Moving Averages (7, 21, 30-day)**  
   - **RSI** (Relative Strength Index)  
   - **Bollinger Bands**  
