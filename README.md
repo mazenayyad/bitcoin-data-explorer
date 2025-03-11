@@ -50,7 +50,7 @@ A minimal set of dependencies is pinned in **`requirements.txt`**.
 
 ## 4. Quick Tour (GIF/Overview)
 
-![Demo GIF](./static/img/demo.gif)
+![Demo GIF](./static/img/demos.gif)
 
 1. **Landing Page – BTC Price Timeline**  
    - Instantly see the historical closing price of Bitcoin, with hover-enabled data points.
@@ -99,14 +99,8 @@ A minimal set of dependencies is pinned in **`requirements.txt`**.
 - **Enhanced Market Coverage**  
   - Incorporate additional indexes (NASDAQ, Dow Jones) or altcoins (ETH, LTC) for broader comparisons.
 
-- **Advanced ML Models**  
-  - Time-series forecasting (ARIMA, LSTM) for predictive analytics on BTC price swings.
-
 - **Sentiment Analysis**  
   - Expand the Google Trends approach to parse *Twitter* or *Reddit* sentiment signals.
-
-- **Deployment**  
-  - Containerize with **Docker** or host on a cloud service (e.g., AWS/Heroku) for a shareable, always-on instance.
 
 ---
 
