@@ -48,9 +48,11 @@ A minimal set of dependencies is pinned in **`requirements.txt`**.
 
 ---
 
-## 4. Quick Tour (GIF/Overview)
+## 4. Quick Tour (Demo/GIF/Overview)
+
 
 ![Demo GIF](./static/img/demos.gif)
+[**Try the live demo here**](https://bitcoin-data-explorer-mazen.streamlit.app/)
 
 1. **Landing Page – BTC Price Timeline**  
    - Instantly see the historical closing price of Bitcoin, with hover-enabled data points.
