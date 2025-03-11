@@ -1,27 +1,27 @@
 # Bitcoin Data Explorer
-**An interactive analytics suite for Bitcoin price data, integrating S&P 500 comparisons, Google Trends, and powerful technical indicators.**
+**A real-time interactive analytics suite for Bitcoin price data, integrating S&P 500 comparisons, Google Trends, and powerful technical indicators.**
 
 ---
 
 ## 1. High-Level Overview
 
-Bitcoin’s price can appear chaotic, but effective analysis reveals meaningful patterns. This project tackles the challenge of **daily BTC data updates**, *correlates* them with **S&P 500** performance, and *visualizes* **Google Trends** interest—creating a comprehensive snapshot of Bitcoin’s market behavior over time.
+Bitcoin’s price can appear chaotic, but effective analysis reveals meaningful patterns. This project tackles the challenge of **daily BTC data updates** by displaying **near-real-time** market information through seamless integration with `yfinance`. It correlates Bitcoin’s performance with **S&P 500** metrics and *visualizes* **Google Trends** interest, creating a live snapshot of market behavior.
 
-A dashboard showcases **Bollinger Bands**, **RSI**, and **Moving Averages**, as well as fun stats like *longest winning and losing streaks*. With built-in ROI calculations, this project provides a *“what-if”* lens on past Bitcoin performance.
+A dashboard showcases **Bollinger Bands**, **RSI**, and **Moving Averages**, as well as fun stats like *longest winning and losing streaks*. With **built-in ROI calculations** and **auto-refreshing** charts, this project provides a continuous *“what-if”* lens on Bitcoin’s market movements.
 
 ---
 
 ## 2. Key Features
 
-- **Automated Daily Updates**  
-  - Seamless price data retrieval via `yfinance` for both Bitcoin (`BTC-USD`) and the S&P 500 (`^GSPC`).  
-  - Google Trends integration for “Bitcoin” search interest, showing how hype correlates with price.
+- **Real-Time / Auto-Refreshed Data**  
+  - The dashboard continuously fetches up-to-date Bitcoin and S&P 500 data via `yfinance`.
+  - Google Trends scores for "Bitcoin" search interest are updated daily, ensuring all visuals reflect the latest market sentiments.
 
 - **Technical Indicator Overload**  
   - **Moving Averages (7, 21, 30-day)**  
   - **RSI** (Relative Strength Index)  
   - **Bollinger Bands**  
-  - Longest winning/losing streak calculation, with exact start and end dates.
+  - Longest winning/losing streak tracking, with exact start and end dates.
 
 - **ROI Calculator**  
   - Enter any start/end date and investment amount to see the hypothetical profit/loss and overall ROI.
